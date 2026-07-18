@@ -1,0 +1,10 @@
+{
+  "appId": "com.chetwin.lifesim",
+  "appName": "LifeSim",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#f7f4ed"
+  }
+}

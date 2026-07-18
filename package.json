@@ -1,0 +1,23 @@
+{
+  "name": "lifesim",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LifeSim Chet Edition packaged as an Android app with Capacitor and Codemagic.",
+  "scripts": {
+    "sync": "npx cap sync android",
+    "copy": "npx cap copy android",
+    "android:debug": "npm run sync && cd android && ./gradlew assembleDebug",
+    "android:release": "npm run sync && cd android && ./gradlew assembleRelease bundleRelease",
+    "version:patch": "node scripts/bump-version.js patch",
+    "version:minor": "node scripts/bump-version.js minor",
+    "version:major": "node scripts/bump-version.js major"
+  },
+  "keywords": ["lifesim", "capacitor", "android", "codemagic"],
+  "author": "Chetwin Li",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2"
+  }
+}
