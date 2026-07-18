@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LifeSim</string>
+    <string name="title_activity_main">LifeSim</string>
+    <string name="package_name">com.chetwin.lifesim</string>
+    <string name="custom_url_scheme">com.chetwin.lifesim</string>
+</resources>

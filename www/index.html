@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeSim — Chet Edition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button id="menuToggle" class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<section id="registrationPage" class="registration-page" aria-labelledby="registrationTitle">
+  <div class="registration-shell">
+    <div class="registration-intro">
+      <div class="system-mark">◆</div>
+      <p class="eyebrow">System activation</p>
+      <h1 id="registrationTitle">Register Player</h1>
+      <p>
+        Create the player record used for your build, arcs, skills and progression.
+        You can edit this information later from My Sim.
+      </p>
+
+      <div class="registration-preview">
+        <span>PLAYER STATUS</span>
+        <strong>Unregistered</strong>
+        <small>Complete registration to enter LifeSim.</small>
+      </div>
+    </div>
+
+    <form id="registrationForm" class="registration-form" novalidate>
+      <div class="registration-form-head">
+        <p class="eyebrow">Core information</p>
+        <h2>Player Record</h2>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Name <b aria-hidden="true">*</b></span>
+          <input id="regName" autocomplete="name">
+        </label>
+
+        <label class="field">
+          <span>Height (cm)</span>
+          <input id="regHeight" type="number" min="1" inputmode="decimal">
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Weight (kg)</span>
+          <input id="regWeight" type="number" min="1" step="0.1" inputmode="decimal">
+        </label>
+
+        <label class="field">
+          <span>University / workplace</span>
+          <input id="regOrg" autocomplete="organization">
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Degree / occupation</span>
+        <input id="regPath">
+      </label>
+
+      <label class="field">
+        <span>Traits</span>
+        <input id="regTraits" placeholder="Separate traits with commas">
+      </label>
+
+      <label class="field">
+        <span>Bio</span>
+        <textarea id="regBio"></textarea>
+      </label>
+
+      <p id="registrationError" class="error-text" role="alert"></p>
+      <button type="submit" id="registrationSubmit" class="primary registration-submit">Enter the System</button>
+    </form>
+  </div>
+</section>
+
+<div class="app-shell" id="appShell" hidden>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="plumbob">◆</span><div><h1>LifeSim</h1><p>Chet Edition</p></div></div>
+    <nav id="nav">
+      <button class="nav-btn active" data-view="today">🏠 <span>Today</span></button>
+      <button class="nav-btn" data-view="sim">🧍 <span>My Sim</span></button>
+      <button class="nav-btn" data-view="arcs">🗺️ <span>Arcs</span></button>
+      <button class="nav-btn" data-view="quests">📋 <span>Quests</span></button>
+      <button class="nav-btn" data-view="rituals">✨ <span>Rituals</span></button>
+      <button class="nav-btn" data-view="skills">📈 <span>Skills</span></button>
+      <button class="nav-btn" data-view="rewards">🛍️ <span>Rewards</span></button>
+      <button class="nav-btn" data-view="lore">🏆 <span>Life Lore</span></button>
+    </nav>
+    <button id="resetBtn" class="ghost danger sidebar-reset">Reset save</button>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div class="page-heading"><p id="todayDate" class="eyebrow"></p><h2 id="pageTitle">Today</h2><p id="pageSubtitle" class="page-subtitle"></p></div>
+      <div class="top-stats"><span>Lv. <strong id="level">1</strong></span><span>XP <strong id="xp">0</strong>/<strong id="xpNext">100</strong></span><span>💰 <strong id="coins">0</strong></span></div>
+    </header>
+
+    <section id="view-today" class="view active">
+      <div class="hero card">
+        <div><p class="eyebrow">Current state</p><h3 id="heroMood"></h3><p id="heroText"></p></div>
+        <button id="checkInBtn" class="primary">Daily check-in</button>
+      </div>
+      <div class="grid two">
+        <section class="card">
+          <div class="section-head"><div><p class="eyebrow">Needs</p><h3>Sim status</h3></div><button id="manageSimBtn" class="ghost small">Rate needs</button></div>
+          <div id="needsMini" class="needs-list"></div>
+        </section>
+        <section class="card"><p class="eyebrow">Recommended</p><h3>Next best move</h3><div id="recommendation" class="recommendation"></div></section>
+      </div>
+      <div class="grid two">
+        <section class="card"><div class="section-head"><div><p class="eyebrow">Daily gameplay</p><h3>Today's quests</h3></div><button class="ghost small" data-view-link="quests">All quests</button></div><div id="todayQuests" class="stack scroll-box"></div></section>
+        <section class="card"><div class="section-head"><div><p class="eyebrow">Active arc</p><h3 id="todayArcTitle">No active arc</h3></div><button class="ghost small" data-view-link="arcs">Manage arcs</button></div><div id="todayArc"></div></section>
+      </div>
+    </section>
+
+    <section id="view-sim" class="view">
+      <div class="grid sim-grid">
+        <section class="card"><div class="section-head"><div><p class="eyebrow">Registration record</p><h3>My Build</h3></div><button id="editProfileBtn" class="ghost small">Edit</button></div><div id="profileCard" class="profile-card"></div></section>
+        <section class="card"><p class="eyebrow">State</p><h3>Current mood</h3><label class="field"><span>Mood</span><select id="moodSelect"><option>Focused</option><option>Fine</option><option>Tired</option><option>Stressed</option><option>Energised</option><option>Unmotivated</option></select></label><div class="divider"></div><p class="muted">Needs can only be changed through a proper five-point check-in. This prevents random slider fiddling.</p><button id="rerateBtn" class="primary full">Rate all needs</button></section>
+      </div>
+      <section class="card"><p class="eyebrow">Latest assessment</p><h3>Need rankings</h3><div id="needsControls" class="need-rank-summary"></div></section>
+    </section>
+
+    <section id="view-arcs" class="view">
+      <div class="section-head page-section-head"><div><p class="eyebrow">Life Hub goal planner</p><h3>Your arcs</h3></div><button id="addArcBtn" class="primary">+ New arc</button></div>
+      <div class="toolbar"><div class="segmented" id="arcStatusFilters"><button class="active" data-arc-status="ongoing">Ongoing</button><button data-arc-status="future">Future</button><button data-arc-status="paused">Paused</button><button data-arc-status="completed">Completed</button><button data-arc-status="failed">Failed</button></div><select id="arcGroupMode"><option value="all">No grouping</option><option value="type">Group by type</option><option value="motivation">Group by motivation</option><option value="category">Group by category</option></select></div>
+      <div id="arcList" class="arc-grid"></div>
+    </section>
+
+    <section id="view-arc-detail" class="view">
+      <button id="backToArcs" class="ghost small">← Back to arcs</button>
+      <div id="arcDetail"></div>
+    </section>
+
+    <section id="view-quests" class="view">
+      <div class="grid quest-layout">
+        <section class="card quest-board-card"><div class="section-head"><div><p class="eyebrow">Main and side quests</p><h3>Quest board</h3></div><button id="addQuestBtn" class="primary small">+ New quest</button></div><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="uni">University</button><button class="filter" data-filter="life">Life</button><button class="filter" data-filter="fitness">Fitness</button><button class="filter" data-filter="arc">Arc-linked</button></div><div id="questList" class="stack quest-scroll"></div></section>
+        <aside class="card"><p class="eyebrow">Why level up?</p><h3>Progress benefits</h3><div id="levelBenefits"></div></aside>
+      </div>
+    </section>
+
+    <section id="view-rituals" class="view"><div class="section-head page-section-head"><div><p class="eyebrow">Personal mechanics</p><h3>Ritual collection</h3></div><button id="addRitualBtn" class="primary">+ Create ritual</button></div><div id="ritualGrid" class="ritual-grid"></div></section>
+
+    <section id="view-skills" class="view"><div class="section-head page-section-head"><div><p class="eyebrow">Train what matters</p><h3>Skills</h3></div><button id="addSkillBtn" class="primary">+ Add skill</button></div><div id="skillList" class="skill-grid"></div></section>
+
+    <section id="view-rewards" class="view"><div class="grid two"><section class="card"><p class="eyebrow">Coin shop</p><h3>Spend coins on real rewards</h3><p class="muted">Coins are permission tokens, not basic-human-needs tokens. You create rewards you genuinely want and redeem them guilt-free.</p><button id="addRewardBtn" class="primary">+ Add reward</button><div id="rewardList" class="stack reward-list"></div></section><section class="card"><p class="eyebrow">Level unlocks</p><h3>Why gain XP?</h3><div id="unlockList" class="stack"></div></section></div></section>
+
+    <section id="view-lore" class="view">
+      <section class="card lore-card">
+        <p class="eyebrow">Achievements</p>
+        <h3>Life lore</h3>
+        <div id="achievementList" class="achievement-grid"></div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<dialog id="needsDialog" class="locked-dialog">
+  <form class="modal-card" id="needsForm">
+    <p class="eyebrow" id="needsDialogEyebrow">Sim assessment</p>
+    <h3>Rank every need from 1 to 5</h3>
+    <p class="muted" id="needsDialogText">1 = very low, 5 = excellent.</p>
+    <div id="needRatingRows" class="rating-list"></div>
+    <p id="ratingError" class="error-text"></p>
+    <button type="submit" class="primary full">Save assessment</button>
+  </form>
+</dialog>
+<dialog id="checkInDialog"><form method="dialog" class="modal-card"><div class="section-head"><div><p class="eyebrow">Daily check-in</p><h3>Set today's direction</h3></div><button class="icon-btn" value="cancel">×</button></div><label class="field"><span>Current mood</span><select id="checkMood"><option>Focused</option><option>Fine</option><option>Tired</option><option>Stressed</option><option>Energised</option><option>Unmotivated</option></select></label><label class="field"><span>One thing that matters today</span><input id="dailyFocus"></label><label class="field"><span>Something fun or restorative</span><input id="dailyFun"></label><button id="saveCheckIn" value="default" class="primary full">Save check-in</button></form></dialog>
+<dialog id="profileDialog">
+  <form method="dialog" class="modal-card" id="profileForm">
+    <div class="section-head">
+      <div><p class="eyebrow">Registration record</p><h3>Edit profile</h3></div>
+      <button class="icon-btn" value="cancel">×</button>
+    </div>
+    <div class="form-grid">
+      <label class="field"><span>Name</span><input id="profileName" required></label>
+      <label class="field"><span>Height (cm)</span><input id="profileHeight" type="number" min="1"></label>
+    </div>
+    <div class="form-grid">
+      <label class="field"><span>Weight (kg)</span><input id="profileWeight" type="number" min="1" step="0.1"></label>
+      <label class="field"><span>University / workplace</span><input id="profileOrg"></label>
+    </div>
+    <label class="field"><span>Degree / occupation</span><input id="profilePath"></label>
+    <label class="field"><span>Traits, separated by commas</span><input id="profileTraits"></label>
+    <label class="field"><span>Bio</span><textarea id="profileBio"></textarea></label>
+    <button class="primary full" value="default">Save profile</button>
+  </form>
+</dialog>
+
+
+
+
+
+<dialog id="questDialog"><form method="dialog" class="modal-card" id="questForm"><div class="section-head"><div><p class="eyebrow">Quest editor</p><h3 id="questDialogTitle">Create quest</h3></div><button class="icon-btn" value="cancel">×</button></div><input type="hidden" id="questEditId"><label class="field"><span>Quest name</span><input id="questName" required></label><div class="form-grid"><label class="field"><span>Category</span><select id="questCategory"><option value="uni">University</option><option value="life">Life</option><option value="fitness">Fitness</option></select></label><label class="field"><span>Difficulty</span><select id="questDifficulty"><option value="easy">Easy · 10 XP</option><option value="medium">Medium · 25 XP</option><option value="hard">Hard · 50 XP</option></select></label></div><div class="form-grid"><label class="field"><span>Linked arc</span><select id="questArc"></select></label><label class="field"><span>Linked skill</span><select id="questSkill"></select></label></div><label class="field"><span>Repeat</span><select id="questFrequency"><option value="once">Once</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label><label class="check-field"><input type="checkbox" id="questToday" checked> Show on Today page</label><button class="primary full" value="default">Save quest</button></form></dialog>
+<dialog id="arcDialog">
+  <form class="modal-card arc-modal-card" id="arcForm">
+    <div class="modal-header">
+      <div><p class="eyebrow">Arc planner</p><h3 id="arcDialogTitle">Create arc</h3></div>
+      <button class="icon-btn" type="button" id="cancelArcBtn" aria-label="Cancel">×</button>
+    </div>
+    <input type="hidden" id="arcEditId">
+    <div class="form-grid">
+      <label class="field"><span>Arc name</span><input id="arcName"></label>
+      <label class="field"><span>Arc type</span><input id="arcType"></label>
+    </div>
+    <div class="form-grid">
+      <label class="field"><span>Motivation</span><input id="arcMotivation"></label>
+      <label class="field"><span>Category</span><input id="arcCategory"></label>
+    </div>
+    <div class="form-grid">
+      <label class="field"><span>Status</span><select id="arcStatus">
+        <option value="ongoing">Ongoing</option><option value="future">Future</option>
+        <option value="paused">Paused</option><option value="completed">Completed</option>
+        <option value="failed">Failed</option>
+      </select></label>
+      <label class="field"><span>Deadline</span><input id="arcDeadline" type="date"></label>
+    </div>
+    <label class="field"><span>End goal</span><input id="arcEndGoal"></label>
+    <label class="field"><span>Why this matters</span><textarea id="arcWhy"></textarea></label>
+    <label class="field"><span>Current weekly challenge</span><input id="arcWeekly"></label>
+    <label class="field"><span>Repeating daily tasks — one per line</span><textarea id="arcDaily"></textarea></label>
+    <div class="modal-actions">
+      <button type="button" class="ghost" id="cancelArcBtnBottom">Cancel</button>
+      <button type="submit" class="primary">Save arc</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="arcNoteDialog"><form method="dialog" class="modal-card" id="arcNoteForm"><p class="eyebrow">Arc note</p><h3>Add a progress note</h3><textarea id="arcNoteText" class="large-input" required></textarea><button class="primary full" value="default">Add note</button></form></dialog>
+<dialog id="ritualDialog">
+  <form class="modal-card" id="ritualForm">
+    <div class="modal-header">
+      <div><p class="eyebrow">Create ritual</p><h3>Add a life mechanic</h3></div>
+      <button class="icon-btn" type="button" id="cancelRitualBtn" aria-label="Cancel">×</button>
+    </div>
+    <div class="form-grid">
+      <label class="field"><span>Name</span><input id="ritualName"></label>
+      <label class="field"><span>Icon</span><input id="ritualIcon" maxlength="8" placeholder="✨"></label>
+    </div>
+    <label class="field"><span>Trigger</span><input id="ritualTrigger"></label>
+    <label class="field"><span>Steps — one per line</span><textarea id="ritualSteps"></textarea></label>
+    <label class="field"><span>Reward skill</span><select id="ritualSkill">
+      <option>Fitness</option><option>Programming</option><option>Mathematics</option>
+      <option>Organisation</option><option>Social</option><option>Fun</option>
+    </select></label>
+    <div class="modal-actions">
+      <button type="button" class="ghost" id="cancelRitualBtnBottom">Cancel</button>
+      <button type="submit" class="primary">Create ritual</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="skillDialog"><form method="dialog" class="modal-card" id="skillForm"><div class="section-head"><div><p class="eyebrow">New skill</p><h3>Add something to train</h3></div><button class="icon-btn" value="cancel">×</button></div><label class="field"><span>Skill name</span><input id="skillName" required></label><label class="field"><span>Description</span><input id="skillDescription"></label><button class="primary full" value="default">Add at level 0</button></form></dialog>
+<dialog id="skillTaskDialog"><form method="dialog" class="modal-card" id="skillTaskForm"><p class="eyebrow">Training task</p><h3 id="skillTaskTitle"></h3><input type="hidden" id="skillTaskSkill"><label class="field"><span>Task</span><input id="skillTaskName" required></label><label class="field"><span>Training XP</span><select id="skillTaskXP"><option value="10">10 XP</option><option value="20">20 XP</option><option value="35">35 XP</option><option value="50">50 XP</option></select></label><button class="primary full" value="default">Add training task</button></form></dialog>
+<dialog id="rewardDialog"><form method="dialog" class="modal-card" id="rewardForm"><p class="eyebrow">Custom reward</p><h3>Create a coin purchase</h3><label class="field"><span>Reward</span><input id="rewardName" required></label><label class="field"><span>Coin cost</span><input id="rewardCost" type="number" min="1" value="25" required></label><button class="primary full" value="default">Add reward</button></form></dialog>
+<div id="toast" class="toast"></div>
+
+
+
+
+<datalist id="arcTypeOptions"></datalist>
+<datalist id="motivationOptions"></datalist>
+<datalist id="categoryOptions"></datalist>
+<script src="app.js"></script>
+</body>
+</html>
